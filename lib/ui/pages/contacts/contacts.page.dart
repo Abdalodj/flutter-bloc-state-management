@@ -1,4 +1,7 @@
+import 'package:bloc_rx_app/bloc/contacts.actions.dart';
 import 'package:bloc_rx_app/bloc/contacts.bloc.dart';
+import 'package:bloc_rx_app/bloc/contacts.state.dart';
+import 'package:bloc_rx_app/enums/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -25,65 +28,78 @@ class ContactsPage extends StatelessWidget {
                   child: Text('All Contacts'),
                 ),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    context.read<ContactsBloc>().add(LoadStudentsEvent());
+                  },
                   child: Text('Students'),
                 ),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    context.read<ContactsBloc>().add(LoadDEvelopersEvent());
+                  },
                   child: Text('Developers'),
                 ),
               ],
             ),
           ),
           Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                BlocBuilder<ContactsBloc, ContactsState>(builder: (context, state) {
-                  if (state.requestState == RequestState.LOADING) {
-                    return Center(child: CircularProgressIndicator());
-                  } else if (state.requestState == RequestState.ERROR) {
-                    return Column(
-                      children: [
-                        Text(
-                          '${state.errorMessage}',
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            context.read<ContactsBloc>().add(state.currentEvent);
-                          },
-                          child: Text('Retry', style: TextStyle(color: Colors.white),),
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(Colors.deepOrange),
-                          )
-                        )
-                      ],
-                    );
-                  } else if (state.requestState == RequestState.LOADED) {
-                    return Expanded(
-                      child: ListView.builder(
-                        itemCount: state.contacts.length,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("${state.contacts[index].name}"),
-                                CircleAvatar(
-                                  child: Text('${state.contacts[index].score}'),
-                                )
-                              ],
-                            ),
-                          );
+            child: BlocBuilder<ContactsBloc, ContactsState>(
+                builder: (context, state) {
+              if (state.requestState == RequestState.LOADING) {
+                return Center(child: CircularProgressIndicator());
+              } else if (state.requestState == RequestState.ERROR) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      '${state.errorMessage}',
+                    ),
+                    ElevatedButton(
+                        onPressed: () {
+                          context.read<ContactsBloc>().add(state.currentEvent);
                         },
+                        child: Text(
+                          'Retry',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Colors.deepOrange),
+                        ))
+                  ],
+                );
+              } else if (state.requestState == RequestState.LOADED) {
+                return ListView.builder(
+                  itemCount: state.contacts.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              CircleAvatar(
+                                  child:
+                                      Text('${state.contacts[index].profile}')),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text("${state.contacts[index].name}"),
+                            ],
+                          ),
+                          CircleAvatar(
+                            child: Text('${state.contacts[index].score}'),
+                          ),
+                        ],
                       ),
                     );
-                  } else {
-                    return Container();
-                  }
-                }),
-              ],
-            ),
+                  },
+                );
+              } else {
+                return Container();
+              }
+            }),
           )
         ],
       ),

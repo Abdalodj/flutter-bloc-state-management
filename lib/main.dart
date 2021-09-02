@@ -5,6 +5,10 @@ import 'package:bloc_rx_app/ui/pages/contacts/contacts.page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'bloc/contacts.actions.dart';
+import 'bloc/contacts.state.dart';
+import 'enums/enums.dart';
+
 void main() {
   runApp(MyApp());
 }
@@ -17,11 +21,11 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(
             create: (context) => ContactsBloc(
-                ContactsState(
+                initialState: ContactsState(
                     contacts: [],
                     errorMessage: '',
                     requestState: RequestState.NONE),
-                new ContactsRepository())),
+                contactsRepository: new ContactsRepository())),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

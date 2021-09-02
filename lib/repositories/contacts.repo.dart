@@ -24,10 +24,10 @@ class ContactsRepository {
   Future<List<Contact>> contactsByType(String type) async {
     var future = await Future.delayed(Duration(seconds: 2));
     int rnd = new Random().nextInt(10);
-    if(rnd > 3) {
-      return contacts.values.toList().where((element) => element.type == type);
+    if(rnd > 2) {
+      return contacts.values.toList().where((element) => element.type == type).toList();
     } else {
-      new Exception("Internet Error");
+      throw new Exception("Internet Error");
     }
   }
 }

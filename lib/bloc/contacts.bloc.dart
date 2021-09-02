@@ -1,30 +1,16 @@
 import 'package:bloc/bloc.dart';
+import 'package:bloc_rx_app/enums/enums.dart';
 import 'package:bloc_rx_app/models/contact.model.dart';
 import 'package:bloc_rx_app/repositories/contacts.repo.dart';
 
-abstract class ContactsEvent {}
+import 'contacts.actions.dart';
+import 'contacts.state.dart';
 
-class LoadAllContactsEvent extends ContactsEvent {}
-
-class LoadStudentsEvent extends ContactsEvent{}
-
-class LoadDEvelopersEvent extends ContactsEvent{}
-
-enum RequestState {LOADING, LOADED, ERROR, NONE}
-
-class ContactsState{
-  List<Contact> contacts;
-  RequestState requestState;
-  String errorMessage;
-  ContactsEvent currentEvent;
-
-  ContactsState({this.contacts, this.requestState, this.errorMessage, this.currentEvent});
-}
 
 class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
   ContactsRepository contactsRepository;
 
-  ContactsBloc(ContactsState initialState, this.contactsRepository) : super(initialState);
+  ContactsBloc({ContactsState initialState, this.contactsRepository}) : super(initialState);
 
 
   @override
@@ -38,9 +24,21 @@ class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
         yield ContactsState(contacts: state.contacts, requestState: RequestState.ERROR, errorMessage: e.message, currentEvent: event);
       }
     } else if(event is LoadStudentsEvent) {
-
+      yield ContactsState(contacts: state.contacts, requestState: RequestState.LOADING, currentEvent: event);
+      try {
+        List<Contact> data = await contactsRepository.contactsByType('Student');
+        yield ContactsState(contacts: data, requestState: RequestState.LOADED, currentEvent: event);
+      } catch (e) {
+        yield ContactsState(contacts: state.contacts, requestState: RequestState.ERROR, errorMessage: e.message, currentEvent: event);
+      }
     } else if(event is LoadDEvelopersEvent) {
-
+      yield ContactsState(contacts: state.contacts, requestState: RequestState.LOADING, currentEvent: event);
+      try {
+        List<Contact> data = await contactsRepository.contactsByType('Developer');
+        yield ContactsState(contacts: data, requestState: RequestState.LOADED, currentEvent: event);
+      } catch (e) {
+        yield ContactsState(contacts: state.contacts, requestState: RequestState.ERROR, errorMessage: e.message, currentEvent: event);
+      }
     }
   }
 
