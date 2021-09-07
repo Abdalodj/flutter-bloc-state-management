@@ -1,5 +1,5 @@
-import 'package:bloc_rx_app/bloc/contacts.actions.dart';
-import 'package:bloc_rx_app/bloc/contacts.bloc.dart';
+import 'package:bloc_rx_app/bloc/contacts/contacts.actions.dart';
+import 'package:bloc_rx_app/bloc/contacts/contacts.bloc.dart';
 import 'package:bloc_rx_app/ui/pages/contacts/widgets/contacts.button.item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
